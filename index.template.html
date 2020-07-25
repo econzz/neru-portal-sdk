@@ -29,7 +29,9 @@
     <input type="hidden" id="game_id" value="15933429479419723">
        
 
-    <button onclick="myFunction()">CLICK HERE</button>
+    <button onclick="registerScore()">CLICK HERE REGISTER</button><br>
+    <button onclick="additionScore()">CLICK HERE ADDITION</button><br>
+    <button onclick="listRanking()">CLICK HERE listRanking</button>
     
     <script>
       NHPScript.initialize().then(function(){
@@ -37,13 +39,42 @@
         NHPScript.startGame().then(function(){
             console.log("your player id is");
             console.log(NHPScript.player);
+        }).catch(function(e){
+          console.log("error startinggame");
+          console.log(e);
         });
-      });
-      function myFunction(){
-        NHPScript.sendScore("test",10).then(function(){
+      }).catch(function(e){
+          console.log("error initialize");
+          console.log(e);
+        });
+      function registerScore(){
+        NHPScript.sendScore("NERU",1).then(function(){
           console.log("send success");
+        }).catch(function(e){
+          console.log("error sending");
+          console.log(e);
         });
       }
+
+      function additionScore(){
+        NHPScript.addScore("NERU",1).then(function(){
+          console.log("send success");
+        }).catch(function(e){
+          console.log("error sending");
+          console.log(e);
+        });
+      }
+
+      function listRanking(){
+        NHPScript.getAlltimeLeaderboard(1).then(function(response){
+          console.log("retrieval success");
+          console.log(response);
+        }).catch(function(e){
+          console.log("error sending");
+          console.log(e);
+        });
+      }
+
     </script>
   </body>
 </html>

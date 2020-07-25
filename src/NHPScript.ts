@@ -1,5 +1,5 @@
 import NHPInterface from "./NHPInterface";
-import { METHOD, PLAYER, ENVIRONMENT } from "./types/NHPType";
+import { METHOD, PLAYER, ENVIRONMENT, ERROR_CODE } from "./types/NHPType";
 import {API_VERSION, CURRENT_ENV, LOCAL_SERVER_URL, DEV_SERVER_URL, LIVE_SERVER_URL } from "./const";
 import NHPStorageController from "./LocalStorage/NHPStorageController";
 var FingerPrint2 = require("fingerprintjs2");
@@ -43,17 +43,24 @@ export default class NHPScript implements NHPInterface{
             this.currentUrl = LIVE_SERVER_URL;
         }
     }
+    retrievePlayer: () => void;
     
 
     initialize(){
         return new Promise<any>((resolve,reject)=>{
-            var self = this;
-            window.onload = () => {
-                var el: HTMLInputElement = <HTMLInputElement>document.getElementById('game_id');
-                self.gameId = el.value;
-                NHPStorageController.getInstance().loadSaveData();
-                resolve({});
-            };
+            try{
+                var self = this;
+                window.onload = () => {
+                    var el: HTMLInputElement = <HTMLInputElement>document.getElementById('game_id');
+                    self.gameId = el.value;
+                    NHPStorageController.getInstance().loadSaveData();
+                    resolve({});
+                };
+            }
+            catch(e){
+                reject(e);
+            }
+            
             
         });
     }
@@ -78,8 +85,29 @@ export default class NHPScript implements NHPInterface{
                 
             }
             catch(e){
-                reject({});
+                reject(e);
             }
+            
+        });
+    }
+
+    addScore(name:string,score:number){
+        return new Promise<any>((resolve,reject)=>{
+            this.player.name = name;
+            let requestParameter = {
+                "player_id" : this.player.id,
+                "player_name" : this.player.name,
+                "score" : score
+            };
+            this.sendServer(METHOD.POST,this.gameId+"/add_score",requestParameter,function(isSucccess:boolean,responseData:any){
+                if(isSucccess){
+                    resolve(responseData);
+                }
+                else{
+                    reject(responseData);
+                }
+            });
+
             
         });
     }
@@ -105,7 +133,7 @@ export default class NHPScript implements NHPInterface{
         });
     }
 
-    getAlltimeLeaderboard(pageNumber:number,totalPage:number){
+    getAlltimeLeaderboard(pageNumber:number){
         return new Promise<any>((resolve,reject)=>{
 
             this.sendServer(METHOD.GET,this.gameId+"/ranking_total/"+pageNumber,{},function(isSucccess:boolean,responseData:any){
@@ -120,6 +148,26 @@ export default class NHPScript implements NHPInterface{
             
         });
     }
+
+    registerPlayerName(name:string){
+        return new Promise<any>((resolve,reject)=>{
+            let playerParameter = {
+                player_name:name
+            };
+            var self = this;
+            this.sendServer(METHOD.POST,"player/"+this.player.id,playerParameter,function(isSucccess:boolean,responseData:any){
+                if(isSucccess){
+                    self.player.name = name;
+                    resolve(responseData);
+                }
+                else{
+                    reject(responseData);
+                }
+            });
+
+            
+        });
+    };
 
     sendServer(method:METHOD, path:string, parameter:any, onComplete:(isSucccess:boolean,responseData:any)=>void){
         let xhr = new XMLHttpRequest();
@@ -159,7 +207,7 @@ export default class NHPScript implements NHPInterface{
         if (method == METHOD.POST) {
             xhr.open('POST', url, true);
             // application/x-www-form-urlencoded; これをなくすと blocked by CORS policy エラーが出るので無くさない
-            xhr.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded;application/json;charset=utf-8');
+            xhr.setRequestHeader( 'Content-Type', 'application/json;charset=utf-8');
             xhr.send(JSON.stringify(parameter));
             
         }
