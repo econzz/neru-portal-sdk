@@ -2,8 +2,16 @@ import $ from "jquery";
 var styleCommon = require("../../assets/css/common.css");
 export default class NHPScene{
     
-    sceneDiv:any;
-    overlayDiv:any;
+    private sceneDiv:any;
+    public getSceneDiv(){
+        return this.sceneDiv;
+    }
+
+    private overlayDiv:any;
+    public getOverlayDiv(){
+        return this.overlayDiv;
+    }
+
 
     constructor(){
         if($( "#nhp-scene" ).length){//if div exists
@@ -19,6 +27,8 @@ export default class NHPScene{
 
         this.sceneDiv.appendTo('body');
     }
+
+    
 
     constructOverlay(){
         if($( "#nhp-overlay" ).length){//if div exists
