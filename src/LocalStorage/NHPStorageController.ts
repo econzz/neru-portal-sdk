@@ -26,13 +26,15 @@ export default class NHPStorageController{
         this.currentLocalData = {
             version:SAVE_VERSION,
             playerId:"",
-            playerName:""
+            playerName:"",
+            isFirstPlay:true,
         };
     }
 
-    setPlayerInfo(player:PLAYER){
+    setPlayerInfo(player:PLAYER,isFirstPlay:boolean){
         this.currentLocalData.playerId = player.id;
         this.currentLocalData.playerName = player.name;
+        this.currentLocalData.isFirstPlay = isFirstPlay;
         this.setSaveData();
     }
 
@@ -57,9 +59,14 @@ export default class NHPStorageController{
             return this.currentLocalData;
         }
 
+        if(saveData.version != SAVE_VERSION){
+            return this.currentLocalData;
+        }
+
         this.currentLocalData.playerId = saveData.playerId;
         this.currentLocalData.playerName = saveData.playerName;
         this.currentLocalData.version = saveData.version;
+        this.currentLocalData.isFirstPlay = saveData.isFirstPlay;
 
         return this.currentLocalData;
         

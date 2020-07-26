@@ -8,4 +8,6 @@ export const API_VERSION:string = "v1";
 export const CURRENT_ENV:ENVIRONMENT = ENVIRONMENT.LOCAL;
 
 export const SAVE_DATA_KEY:string = "NHP_savekey";
-export const SAVE_VERSION:number = 1;
+export const SAVE_VERSION:number = 2;
+
+export const DEFAULT_PLAYER_NAME:string = "New Player";

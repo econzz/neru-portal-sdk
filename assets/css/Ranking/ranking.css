@@ -1,0 +1,133 @@
+.ranking-popup{
+  margin-top: -10%;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  margin: auto;
+  width: 400px;
+  height: 520px;
+  position: fixed;
+  background: rgba(0, 0, 0, 0.8);
+  border: 3px solid #FFFFFF;
+  box-sizing: border-box;
+  box-shadow: 0px 6px 2px rgba(0, 0, 0, 0.25);
+  border-radius: 20px;
+  z-index: 1001;
+}
+
+.slick-disabled {
+  display: none; 
+  pointer-events:none;
+}
+
+.ranking-upper{
+  height:30%;
+}
+
+.nhp-ranking-upper-label{
+  color:white;
+  text-align: center;
+  padding-top: 14px;
+}
+
+.ranking-upper-achieved{
+  height:10%;
+    margin-top: 25px;
+    margin-left: 0%;
+    text-align: center;
+}
+
+.ranking-upper-label-achievedscore{
+  color:white;
+}
+
+.ranking-upper-achievedscore{
+  color:white;
+}
+.ranking-upper-label-achievedrank{
+  display: inline-block;
+    margin-top: 17px;
+  color:white;
+}
+.ranking-upper-achievedrank{
+  color:white;
+  display: inline-block;
+}
+
+.nhp-ranking-upper-label-score{
+  color:white;
+  text-align: center;
+  padding-top: 14px;
+}
+
+.ranking-upper-rankingLabel-ruler{
+  border:3px solid #000000;
+  
+}
+
+.ranking-upper-rankingLabel-rank{
+  color:white;
+  display: inline-block;
+    margin-top: 15%;
+    margin-left: 12px;
+}
+.ranking-upper-rankingLabel-name{
+  color:white;
+  display:inline-block;
+  margin-top: 15%;
+  margin-left: 23px;
+}
+.ranking-upper-rankingLabel-score{
+  color:white;
+  display:inline-block;
+  margin-top: 15%;
+  margin-left: 54%;
+}
+
+.ranking-lower{
+
+  height:20%;
+}
+.ranking-scrollable{
+  background: rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+  height: 50%;
+}
+
+
+
+.ranking-row{
+  height: 68px;
+  border: 3px solid #0c0c0c;
+  border-radius: 9px;
+  background: white;
+  display: flex !important;
+}
+
+.ranking-row-rank{
+  background: rgba(129, 179, 255, 0.8);
+    padding: 22px;
+    width: 2%;
+}
+
+.ranking-row-name{
+
+   
+    width: 70%;
+    padding: 20px;
+}
+
+.ranking-row-score{
+
+   
+    width: 20%;
+    padding: 20px;
+}
+
+.ranking-lower-close{
+  width: 80%;
+  height: 45%;
+  margin-top: 7%;
+  margin-left: 10%;
+}

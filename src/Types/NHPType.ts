@@ -21,11 +21,23 @@ export interface PLAYER{
 export interface SAVE_DATA{
     version:number,
     playerId:string,
-    playerName:string
+    playerName:string,
+    isFirstPlay:boolean
 }
 
 export enum ENVIRONMENT{
     LOCAL,
     DEVELOPMENT,
     LIVE
+}
+
+export interface RANKING{
+    ranks:RANKING_DATA[],
+    myPlayer:PLAYER
+}
+
+export interface RANKING_DATA{
+    rank:number,
+    player:PLAYER,
+    score:number
 }

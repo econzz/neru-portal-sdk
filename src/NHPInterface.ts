@@ -12,7 +12,7 @@ export default interface NHPInterface{
     addScore:(name:string,score:number)=>void;
 
     sendScore:(name:string,score:number)=>void;
-    getAlltimeLeaderboard:(pageNumber:number,totalPage:number)=>void;
+    getAlltimeLeaderboard:(pageNumber:number)=>void;
 
     registerPlayerName:(name:string)=>void;
 

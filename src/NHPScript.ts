@@ -1,9 +1,10 @@
 import NHPInterface from "./NHPInterface";
-import { METHOD, PLAYER, ENVIRONMENT, ERROR_CODE } from "./types/NHPType";
-import {API_VERSION, CURRENT_ENV, LOCAL_SERVER_URL, DEV_SERVER_URL, LIVE_SERVER_URL } from "./const";
+import { METHOD, PLAYER, ENVIRONMENT, ERROR_CODE, ERROR } from "./types/NHPType";
+import {API_VERSION, CURRENT_ENV, LOCAL_SERVER_URL, DEV_SERVER_URL, LIVE_SERVER_URL, DEFAULT_PLAYER_NAME } from "./const";
 import NHPStorageController from "./LocalStorage/NHPStorageController";
 import NHPLogin from "./Scene/NHPLogin";
-import NHPScene from "./Scene/NHPScene";
+import NHPSceneController from "./Scene/NHPSceneController";
+
 var FingerPrint2 = require("fingerprintjs2");
 export default class NHPScript implements NHPInterface{
 
@@ -52,11 +53,24 @@ export default class NHPScript implements NHPInterface{
         return new Promise<any>((resolve,reject)=>{
             try{
                 var self = this;
-                let test = new NHPLogin();
+                
                 window.onload = () => {
                     var el: HTMLInputElement = <HTMLInputElement>document.getElementById('game_id');
                     self.gameId = el.value;
                     NHPStorageController.getInstance().loadSaveData();
+
+                    //playerId is empty,not yet issued
+                    if(NHPStorageController.getInstance().currentLocalData.playerId === ""){
+                        this.generatePlayerInfoFromBrowser(function(retrievedPlayerInfo:PLAYER){
+                            self.player = retrievedPlayerInfo;
+                            NHPStorageController.getInstance().setPlayerInfo(self.player,true);
+                            resolve({});
+                        });
+                        return;
+                    }
+                    //user player id and name from localstorage, if any
+                    self.player.id = NHPStorageController.getInstance().currentLocalData.playerId;
+                    self.player.name = NHPStorageController.getInstance().currentLocalData.playerName;
                     resolve({});
                 };
             }
@@ -72,18 +86,29 @@ export default class NHPScript implements NHPInterface{
         return new Promise<any>((resolve,reject)=>{
             try{
                 var self = this;
-                //playerId is not yet saved
-                if(NHPStorageController.getInstance().currentLocalData.playerId === ""){
-                    this.generatePlayerInfoFromBrowser(function(retrievedPlayerInfo:PLAYER){
-                        self.player = retrievedPlayerInfo;
-                        NHPStorageController.getInstance().setPlayerInfo(self.player);
-                        resolve({});
+                
+                //first play
+                if(NHPStorageController.getInstance().currentLocalData.isFirstPlay){
+                    NHPSceneController.getInstance().showFirstPlay(self.player,function(updatedPlayer:PLAYER){
+                        self.registerPlayerName(updatedPlayer.name).then(function(){
+                            NHPStorageController.getInstance().setPlayerInfo(self.player,false);
+                        }).catch(function(e){
+
+                        });
                     });
-                    return;
                 }
-                //user player id and name from localstorage, if any
-                self.player.id = NHPStorageController.getInstance().currentLocalData.playerId;
-                self.player.name = NHPStorageController.getInstance().currentLocalData.playerName;
+                else{
+                    NHPSceneController.getInstance().processLogin(self.player,function(updatedPlayer:PLAYER){
+                        self.registerPlayerName(updatedPlayer.name).then(function(){
+                            NHPStorageController.getInstance().setPlayerInfo(self.player,false);
+                        }).catch(function(e){
+                            
+                        });
+                    });
+                }
+
+                
+
                 resolve({});
                 
             }
@@ -102,8 +127,18 @@ export default class NHPScript implements NHPInterface{
                 "player_name" : this.player.name,
                 "score" : score
             };
+            var self = this;
             this.sendServer(METHOD.POST,this.gameId+"/add_score",requestParameter,function(isSucccess:boolean,responseData:any){
                 if(isSucccess){
+                    self.getAlltimeLeaderboard(1).then(function(responseData:any){
+                        
+                        NHPSceneController.getInstance().registerScore(score,{
+                            ranks:responseData.ranks,
+                            myPlayer:self.player
+                        },function(){});
+                    }).catch(function(e:ERROR){
+
+                    });
                     resolve(responseData);
                 }
                 else{
@@ -123,8 +158,19 @@ export default class NHPScript implements NHPInterface{
                 "player_name" : this.player.name,
                 "score" : score
             };
+            var self = this;
             this.sendServer(METHOD.POST,this.gameId+"/register_score",requestParameter,function(isSucccess:boolean,responseData:any){
                 if(isSucccess){
+                    self.getAlltimeLeaderboard(1).then(function(responseData:any){
+                        
+                        NHPSceneController.getInstance().registerScore(score,{
+                            ranks:responseData.ranks,
+                            myPlayer:self.player
+                        },function(){});
+                    }).catch(function(e:ERROR){
+
+                    });
+                    
                     resolve(responseData);
                 }
                 else{
@@ -234,7 +280,7 @@ export default class NHPScript implements NHPInterface{
         function onSuccessRetrieval(result:any,components:any){
             onSuccess({
                 id:result,
-                name:result
+                name:DEFAULT_PLAYER_NAME
             });
         }
     }
