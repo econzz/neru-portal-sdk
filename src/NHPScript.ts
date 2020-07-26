@@ -2,6 +2,8 @@ import NHPInterface from "./NHPInterface";
 import { METHOD, PLAYER, ENVIRONMENT, ERROR_CODE } from "./types/NHPType";
 import {API_VERSION, CURRENT_ENV, LOCAL_SERVER_URL, DEV_SERVER_URL, LIVE_SERVER_URL } from "./const";
 import NHPStorageController from "./LocalStorage/NHPStorageController";
+import NHPLogin from "./Scene/NHPLogin";
+import NHPScene from "./Scene/NHPScene";
 var FingerPrint2 = require("fingerprintjs2");
 export default class NHPScript implements NHPInterface{
 
@@ -50,6 +52,7 @@ export default class NHPScript implements NHPInterface{
         return new Promise<any>((resolve,reject)=>{
             try{
                 var self = this;
+                let test = new NHPLogin();
                 window.onload = () => {
                     var el: HTMLInputElement = <HTMLInputElement>document.getElementById('game_id');
                     self.gameId = el.value;

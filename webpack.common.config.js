@@ -14,11 +14,28 @@ module.exports = {
         test: /\.tsx?$/,
         use: 'ts-loader',
         exclude: /node_modules/
-      }
-    ]
+      },
+      {
+        test: /\.css$/i,
+        use: [
+          // style-loader
+          { loader: 'style-loader', options: { injectType: 'styleTag' } },
+          // css-loader
+          {
+            loader: 'css-loader',
+            options: {
+              modules: true
+            }
+          },
+          // sass-loader
+          { loader: 'sass-loader' }
+        ]
+      },
+    ],
+    
   },
   resolve: {
-    extensions: [ '.tsx', '.ts', '.js' ]
+    extensions: [ '.tsx', '.ts', '.js' ,'.css']
   },
   plugins: [
     //new CleanWebpackPlugin(),
