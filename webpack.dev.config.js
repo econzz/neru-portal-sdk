@@ -6,7 +6,7 @@ const path = require('path');
 module.exports = merge(common, {
   mode: 'development', // 開発モード
   output: {
-    filename: 'main.js',
+    filename: 'nhp-sdk.js',
     path: path.resolve(__dirname, 'dist/dev/')
   },
   devtool: 'inline-source-map', // 開発用ソースマップ,

@@ -2,7 +2,7 @@
 <html>
   <head>
     <script src="lib/vconsole/vconsole.min.js"></script>
-    <script src="main.js"></script>
+    <script src="https://portal.neruchan.com/sdk/nhp-sdk.js"></script>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width">
     <style type="text/css">
@@ -26,7 +26,7 @@
   </head>
   <body>
     
-    <input type="hidden" id="game_id" value="15933429479419723">
+    <input type="hidden" id="game_id" value="15959462046054337">
        
 
     <button onclick="registerScore()">CLICK HERE REGISTER</button><br>
@@ -48,7 +48,7 @@
           console.log(e);
         });
       function registerScore(){
-        NHPScript.sendScore("NERU",1).then(function(){
+        NHPScript.sendScore(1).then(function(){
           console.log("send success");
         }).catch(function(e){
           console.log("error sending");
@@ -57,7 +57,7 @@
       }
 
       function additionScore(){
-        NHPScript.addScore("NERU",1).then(function(){
+        NHPScript.addScore(1).then(function(){
           console.log("send success");
         }).catch(function(e){
           console.log("error sending");

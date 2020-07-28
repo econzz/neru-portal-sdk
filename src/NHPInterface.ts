@@ -9,9 +9,9 @@ export default interface NHPInterface{
     initialize:()=>void;
     startGame:()=>void;
 
-    addScore:(name:string,score:number)=>void;
+    addScore:(score:number,name?:string)=>void;
 
-    sendScore:(name:string,score:number)=>void;
+    sendScore:(score:number,name?:string)=>void;
     getAlltimeLeaderboard:(pageNumber:number)=>void;
 
     registerPlayerName:(name:string)=>void;

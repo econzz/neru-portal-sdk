@@ -43,9 +43,6 @@ module.exports = {
       title: 'nelson-boilerplate',
       template: 'index.template.html'
     }),
-    new CopyPlugin([
-      { from: 'assets', to: 'assets' },
-      { from: 'lib', to: 'lib' },
-    ])
+    
   ]
 };

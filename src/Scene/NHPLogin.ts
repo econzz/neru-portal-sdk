@@ -50,9 +50,15 @@ export default class NHPLogin{
     showLoginPopup(){
         this.loginSceneDiv.show();
         this.loginAsPopupDiv.show();
+        var self = this;
+        setTimeout(function(){
+            self.hideLoginPopup(true);
+        },2000);
     }
-    hideLoginPopup(){
-        this.loginSceneDiv.hide();
+    hideLoginPopup(isSwitching?:boolean){
+        if(isSwitching === false){
+            this.loginSceneDiv.hide();
+        }
         this.loginAsPopupDiv.hide();
     }
 

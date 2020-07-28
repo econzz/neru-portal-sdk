@@ -119,6 +119,7 @@ export default class NHPRanking{
     }
 
     hideRanking(){
+        this.rankingScrollableContentDiv.slick("unslick");
         this.rankingSceneDiv.hide();
     }
 }

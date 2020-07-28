@@ -7,7 +7,7 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 module.exports = merge(common, {
   mode: 'production', // 本番モード
   output: {
-    filename: 'main.js',
+    filename: 'nhp-sdk.min.js',
     path: path.resolve(__dirname, 'dist/live/')
   },
   optimization: {

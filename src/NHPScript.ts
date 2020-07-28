@@ -49,30 +49,37 @@ export default class NHPScript implements NHPInterface{
     retrievePlayer: () => void;
     
 
+    log(toLog:string){
+        console.log("%c "+toLog, "color: blue;"); 
+    }
+
     initialize(){
         return new Promise<any>((resolve,reject)=>{
             try{
                 var self = this;
                 
-                window.onload = () => {
-                    var el: HTMLInputElement = <HTMLInputElement>document.getElementById('game_id');
-                    self.gameId = el.value;
-                    NHPStorageController.getInstance().loadSaveData();
 
-                    //playerId is empty,not yet issued
-                    if(NHPStorageController.getInstance().currentLocalData.playerId === ""){
-                        this.generatePlayerInfoFromBrowser(function(retrievedPlayerInfo:PLAYER){
-                            self.player = retrievedPlayerInfo;
-                            NHPStorageController.getInstance().setPlayerInfo(self.player,true);
-                            resolve({});
-                        });
-                        return;
-                    }
-                    //user player id and name from localstorage, if any
-                    self.player.id = NHPStorageController.getInstance().currentLocalData.playerId;
-                    self.player.name = NHPStorageController.getInstance().currentLocalData.playerName;
-                    resolve({});
-                };
+                
+                var el: HTMLInputElement = <HTMLInputElement>parent.document.getElementById('game_id');//notsafe
+                self.gameId = el.value;
+                NHPStorageController.getInstance().loadSaveData();
+
+                //playerId is empty,not yet issued
+                if(NHPStorageController.getInstance().currentLocalData.playerId === ""){
+                    this.generatePlayerInfoFromBrowser(function(retrievedPlayerInfo:PLAYER){
+                        self.player = retrievedPlayerInfo;
+                        NHPStorageController.getInstance().setPlayerInfo(self.player,true);
+                        resolve({});
+                    });
+                    return;
+                }
+
+
+                //user player id and name from localstorage, if any
+                self.player.id = NHPStorageController.getInstance().currentLocalData.playerId;
+                self.player.name = NHPStorageController.getInstance().currentLocalData.playerName;
+                resolve({});
+                
             }
             catch(e){
                 reject(e);
@@ -119,9 +126,10 @@ export default class NHPScript implements NHPInterface{
         });
     }
 
-    addScore(name:string,score:number){
+    addScore(score:number,name?:string){
         return new Promise<any>((resolve,reject)=>{
-            this.player.name = name;
+            if(name)
+                this.player.name = name;
             let requestParameter = {
                 "player_id" : this.player.id,
                 "player_name" : this.player.name,
@@ -150,9 +158,11 @@ export default class NHPScript implements NHPInterface{
         });
     }
 
-    sendScore(name:string,score:number){
+    sendScore(score:number,name?:string){
         return new Promise<any>((resolve,reject)=>{
-            this.player.name = name;
+            if(name)
+                this.player.name = name;
+
             let requestParameter = {
                 "player_id" : this.player.id,
                 "player_name" : this.player.name,
@@ -252,7 +262,7 @@ export default class NHPScript implements NHPInterface{
                     break;
             }
         };
-        let url:string = this.currentUrl+ "/"+ API_VERSION + "/" + path;
+        let url:string = this.currentUrl+ "/api/"+ API_VERSION + "/" + path;
         if (method == METHOD.POST) {
             xhr.open('POST', url, true);
             // application/x-www-form-urlencoded; これをなくすと blocked by CORS policy エラーが出るので無くさない
