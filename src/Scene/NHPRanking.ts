@@ -116,6 +116,12 @@ export default class NHPRanking{
         this.loadRankingData(data);
 
         this.rankingSceneDiv.show();
+        this.rankingSceneDiv.css("zoom","0.2");
+        this.rankingSceneDiv.css("top","-100px");
+        this.rankingSceneDiv.css("opacity","0");
+        this.rankingSceneDiv.animate({zoom: "1",opacity:"1"},500,function(){
+            //callback
+        });
     }
 
     hideRanking(){

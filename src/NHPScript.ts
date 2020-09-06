@@ -60,8 +60,7 @@ export default class NHPScript implements NHPInterface{
                 
 
                 
-                var el: HTMLInputElement = <HTMLInputElement>parent.document.getElementById('game_id');//notsafe
-                self.gameId = el.value;
+                self.getGameId();
                 NHPStorageController.getInstance().loadSaveData();
 
                 //playerId is empty,not yet issued
@@ -76,8 +75,7 @@ export default class NHPScript implements NHPInterface{
 
 
                 //user player id and name from localstorage, if any
-                self.player.id = NHPStorageController.getInstance().currentLocalData.playerId;
-                self.player.name = NHPStorageController.getInstance().currentLocalData.playerName;
+                this.getPlayer();
                 resolve({});
                 
             }
@@ -126,8 +124,24 @@ export default class NHPScript implements NHPInterface{
         });
     }
 
+    getGameId(){
+        var el: HTMLInputElement = <HTMLInputElement>parent.document.getElementById('game_id');//notsafe
+        this.gameId = el.value;
+
+        return this.gameId;
+    }
+
+    getPlayer(){
+        //user player id and name from localstorage, if any
+        this.player.id = NHPStorageController.getInstance().currentLocalData.playerId;
+        this.player.name = NHPStorageController.getInstance().currentLocalData.playerName;
+
+        return this.player;
+    }
+
     addScore(score:number,name?:string){
         return new Promise<any>((resolve,reject)=>{
+            this.getPlayer();
             if(name)
                 this.player.name = name;
             let requestParameter = {
@@ -135,6 +149,10 @@ export default class NHPScript implements NHPInterface{
                 "player_name" : this.player.name,
                 "score" : score
             };
+
+            if(!this.gameId)
+                this.getGameId();
+
             var self = this;
             this.sendServer(METHOD.POST,this.gameId+"/add_score",requestParameter,function(isSucccess:boolean,responseData:any){
                 if(isSucccess){
@@ -160,8 +178,12 @@ export default class NHPScript implements NHPInterface{
 
     sendScore(score:number,name?:string){
         return new Promise<any>((resolve,reject)=>{
+            this.getPlayer();
             if(name)
                 this.player.name = name;
+
+            if(!this.gameId)
+                this.getGameId();
 
             let requestParameter = {
                 "player_id" : this.player.id,
@@ -194,7 +216,9 @@ export default class NHPScript implements NHPInterface{
 
     getAlltimeLeaderboard(pageNumber:number){
         return new Promise<any>((resolve,reject)=>{
-
+            this.getPlayer();
+            if(!this.gameId)
+                this.getGameId();
             this.sendServer(METHOD.GET,this.gameId+"/ranking_total/"+pageNumber,{},function(isSucccess:boolean,responseData:any){
                 if(isSucccess){
                     resolve(responseData);
@@ -210,6 +234,9 @@ export default class NHPScript implements NHPInterface{
 
     registerPlayerName(name:string){
         return new Promise<any>((resolve,reject)=>{
+            this.getPlayer();
+            if(!this.gameId)
+                this.getGameId();
             let playerParameter = {
                 player_name:name
             };

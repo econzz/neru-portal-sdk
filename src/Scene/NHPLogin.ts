@@ -40,6 +40,11 @@ export default class NHPLogin{
         }
         this.loginSceneDiv.show();
         this.registerPopupDiv.show();
+        this.registerPopupDiv.css("zoom","0.2");
+        this.registerPopupDiv.css("opacity","0");
+        this.registerPopupDiv.animate({zoom: "1",opacity:"1"},500,function(){
+            //callback
+        });
     }
 
     hideRegisterNickName(){
@@ -50,9 +55,16 @@ export default class NHPLogin{
     showLoginPopup(){
         this.loginSceneDiv.show();
         this.loginAsPopupDiv.show();
+        this.loginAsPopupDiv.css("top","-100px");
+        this.loginAsPopupDiv.css("opacity","0");
+        this.loginAsPopupDiv.animate({top: "0px",opacity:"1"},500,function(){
+            //callback
+        });
         var self = this;
         setTimeout(function(){
-            self.hideLoginPopup(true);
+            self.loginAsPopupDiv.animate({top: "-100px",opacity:"0"},500,function(){
+                //callback
+            });
         },2000);
     }
     hideLoginPopup(isSwitching?:boolean){

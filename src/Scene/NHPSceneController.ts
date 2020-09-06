@@ -54,6 +54,7 @@ export default class NHPSceneController{
 
 
   showFirstPlay(player:PLAYER,onClose:(updatedPlayer:PLAYER)=>void){
+    console.log("aopijsfoiqjwoijqoiwjg");
     this.loginClass.setData(player);
     this.loginClass.showRegisterNickName(true);
     this.loginClass.registerCallBackOnUpdateName(function(nickname:string){
