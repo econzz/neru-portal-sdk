@@ -1,6 +1,6 @@
 import NHPInterface from "./NHPInterface";
 import { METHOD, PLAYER, ENVIRONMENT, ERROR_CODE, ERROR } from "./types/NHPType";
-import {API_VERSION, CURRENT_ENV, LOCAL_SERVER_URL, DEV_SERVER_URL, LIVE_SERVER_URL, DEFAULT_PLAYER_NAME } from "./const";
+import {API_VERSION, CURRENT_ENV, LOCAL_SERVER_URL, DEV_SERVER_URL, LIVE_SERVER_URL, DEFAULT_PLAYER_NAME, SAVE_DATA_KEY, SAVE_DATA_KEY_LIVE } from "./const";
 import NHPStorageController from "./LocalStorage/NHPStorageController";
 import NHPLogin from "./Scene/NHPLogin";
 import NHPSceneController from "./Scene/NHPSceneController";
@@ -44,13 +44,19 @@ export default class NHPScript implements NHPInterface{
         }
         else if(CURRENT_ENV == ENVIRONMENT.LIVE){
             this.currentUrl = LIVE_SERVER_URL;
+            NHPStorageController.getInstance().saveKey = SAVE_DATA_KEY_LIVE;
         }
     }
     retrievePlayer: () => void;
     
 
-    log(toLog:string){
-        console.log("%c "+toLog, "color: blue;"); 
+    static log(toLog:any){
+        console.log("%c ", "color: blue;",toLog); 
+    }
+
+    getGameIdFromElement(){
+        var el: HTMLInputElement = <HTMLInputElement>parent.document.getElementById('game_id');//notsafe
+        return el.value;
     }
 
     initialize(){
@@ -58,15 +64,18 @@ export default class NHPScript implements NHPInterface{
             try{
                 var self = this;
                 
+                this.gameId = this.getGameIdFromElement();
+                NHPScript.log("INITIALIZE");
+                NHPScript.log(this.gameId);
 
-                
-                self.getGameId();
                 NHPStorageController.getInstance().loadSaveData();
 
                 //playerId is empty,not yet issued
                 if(NHPStorageController.getInstance().currentLocalData.playerId === ""){
                     this.generatePlayerInfoFromBrowser(function(retrievedPlayerInfo:PLAYER){
                         self.player = retrievedPlayerInfo;
+                        NHPScript.log("current local is not yet generated so make new one");
+                        NHPScript.log(self.player);
                         NHPStorageController.getInstance().setPlayerInfo(self.player,true);
                         resolve({});
                     });
@@ -75,7 +84,7 @@ export default class NHPScript implements NHPInterface{
 
 
                 //user player id and name from localstorage, if any
-                this.getPlayer();
+                this.player = this.getPlayer();
                 resolve({});
                 
             }
@@ -91,11 +100,15 @@ export default class NHPScript implements NHPInterface{
         return new Promise<any>((resolve,reject)=>{
             try{
                 var self = this;
-                
+                NHPScript.log("STARTGAME");
+                NHPScript.log(this.gameId);
+                NHPScript.log(self.player);
                 //first play
                 if(NHPStorageController.getInstance().currentLocalData.isFirstPlay){
+                    NHPScript.log("ISFIRSTPLAY");
                     NHPSceneController.getInstance().showFirstPlay(self.player,function(updatedPlayer:PLAYER){
                         self.registerPlayerName(updatedPlayer.name).then(function(){
+                            
                             NHPStorageController.getInstance().setPlayerInfo(self.player,false);
                         }).catch(function(e){
 
@@ -103,6 +116,7 @@ export default class NHPScript implements NHPInterface{
                     });
                 }
                 else{
+                    NHPScript.log("NOTFIRSTPLAY");
                     NHPSceneController.getInstance().processLogin(self.player,function(updatedPlayer:PLAYER){
                         self.registerPlayerName(updatedPlayer.name).then(function(){
                             NHPStorageController.getInstance().setPlayerInfo(self.player,false);
@@ -124,12 +138,7 @@ export default class NHPScript implements NHPInterface{
         });
     }
 
-    getGameId(){
-        var el: HTMLInputElement = <HTMLInputElement>parent.document.getElementById('game_id');//notsafe
-        this.gameId = el.value;
-
-        return this.gameId;
-    }
+    
 
     getPlayer(){
         //user player id and name from localstorage, if any
@@ -141,7 +150,10 @@ export default class NHPScript implements NHPInterface{
 
     addScore(score:number,name?:string){
         return new Promise<any>((resolve,reject)=>{
-            this.getPlayer();
+            
+            if(!this.player.id)
+                this.player = this.getPlayer();
+
             if(name)
                 this.player.name = name;
             let requestParameter = {
@@ -151,7 +163,7 @@ export default class NHPScript implements NHPInterface{
             };
 
             if(!this.gameId)
-                this.getGameId();
+                this.getGameIdFromElement();
 
             var self = this;
             this.sendServer(METHOD.POST,this.gameId+"/add_score",requestParameter,function(isSucccess:boolean,responseData:any){
@@ -178,13 +190,19 @@ export default class NHPScript implements NHPInterface{
 
     sendScore(score:number,name?:string){
         return new Promise<any>((resolve,reject)=>{
-            this.getPlayer();
+            NHPScript.log("sendScore");
+            NHPScript.log(this.gameId);
+            NHPScript.log(this.player);
+            if(!this.player.id)
+                this.player = this.getPlayer();
+
+            if(!this.gameId)
+                this.gameId = this.getGameIdFromElement();
+            
             if(name)
                 this.player.name = name;
 
-            if(!this.gameId)
-                this.getGameId();
-
+            
             let requestParameter = {
                 "player_id" : this.player.id,
                 "player_name" : this.player.name,
@@ -216,9 +234,14 @@ export default class NHPScript implements NHPInterface{
 
     getAlltimeLeaderboard(pageNumber:number){
         return new Promise<any>((resolve,reject)=>{
-            this.getPlayer();
+            NHPScript.log("getAlltimeLeaderboard");
+            NHPScript.log(this.gameId);
+            NHPScript.log(this.player);
+            if(!this.player.id)
+                this.player = this.getPlayer();
             if(!this.gameId)
-                this.getGameId();
+                this.gameId = this.getGameIdFromElement();
+
             this.sendServer(METHOD.GET,this.gameId+"/ranking_total/"+pageNumber,{},function(isSucccess:boolean,responseData:any){
                 if(isSucccess){
                     resolve(responseData);
@@ -234,9 +257,15 @@ export default class NHPScript implements NHPInterface{
 
     registerPlayerName(name:string){
         return new Promise<any>((resolve,reject)=>{
-            this.getPlayer();
+            NHPScript.log("registerPlayerName");
+            NHPScript.log(this.gameId);
+            NHPScript.log(this.player);
+
+            if(!this.player.id)
+                this.player = this.getPlayer();
             if(!this.gameId)
-                this.getGameId();
+                this.gameId = this.getGameIdFromElement();
+
             let playerParameter = {
                 player_name:name
             };

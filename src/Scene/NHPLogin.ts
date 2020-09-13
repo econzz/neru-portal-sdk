@@ -35,7 +35,7 @@ export default class NHPLogin{
     }
 
     showRegisterNickName(isFirst:boolean){ 
-        if(!isFirst){
+        if(!isFirst){ //名前の更新するため
             $("#nhp-nickname-label").html("Greetings! <br>Update your nickname to use in the games!");
         }
         this.loginSceneDiv.show();

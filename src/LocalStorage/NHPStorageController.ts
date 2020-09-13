@@ -1,5 +1,6 @@
 import { SAVE_DATA_KEY, SAVE_VERSION } from "../const";
 import { SAVE_DATA, PLAYER } from "../types/NHPType";
+import NHPScript from "../NHPScript";
 
 export default class NHPStorageController{
 
@@ -11,6 +12,8 @@ export default class NHPStorageController{
     set currentLocalData(value: SAVE_DATA) {
         this._currentLocalData = value;
     }
+
+    saveKey:string;
 
     private static instance:NHPStorageController = null; 
 
@@ -29,6 +32,7 @@ export default class NHPStorageController{
             playerName:"",
             isFirstPlay:true,
         };
+        this.saveKey = SAVE_DATA_KEY;
     }
 
     setPlayerInfo(player:PLAYER,isFirstPlay:boolean){
@@ -44,8 +48,8 @@ export default class NHPStorageController{
         }
         
         // Code for localStorage
-        localStorage.setItem(SAVE_DATA_KEY,JSON.stringify(this.currentLocalData));
-        
+        localStorage.setItem(this.saveKey,JSON.stringify(this.currentLocalData));
+        NHPScript.log("NHPStorageController::setSaveDatacomplete");
     }
 
     loadSaveData():SAVE_DATA{
@@ -53,7 +57,7 @@ export default class NHPStorageController{
             return this.currentLocalData;
         }
         
-        let saveData:any = JSON.parse(localStorage.getItem(SAVE_DATA_KEY));
+        let saveData:any = JSON.parse(localStorage.getItem(this.saveKey));
 
         if(!saveData){
             return this.currentLocalData;
@@ -63,11 +67,14 @@ export default class NHPStorageController{
             return this.currentLocalData;
         }
 
-        this.currentLocalData.playerId = saveData.playerId;
-        this.currentLocalData.playerName = saveData.playerName;
-        this.currentLocalData.version = saveData.version;
+        this.currentLocalData.playerId = saveData.playerId?saveData.playerId:this.currentLocalData.playerId;
+        this.currentLocalData.playerName = saveData.playerName?saveData.playerName:this.currentLocalData.playerName;
+        this.currentLocalData.version = saveData.version?saveData.version:this.currentLocalData.version;
         this.currentLocalData.isFirstPlay = saveData.isFirstPlay;
 
+        NHPScript.log("NHPStorageController::loadSaveDatacomplete");
+        NHPScript.log(this.currentLocalData);
+         
         return this.currentLocalData;
         
     }
