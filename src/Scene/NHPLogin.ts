@@ -1,6 +1,7 @@
 
 import $ from "jquery";
 import { ERROR_CODE, ERROR, PLAYER } from "../types/NHPType";
+import NHPScript from "../NHPScript";
 var styleLogin = require("../../assets/css/Login/login.css");
 export default class NHPLogin{
 
@@ -9,6 +10,8 @@ export default class NHPLogin{
     registerPopupDiv:any;
     loginAsPopupDiv:any;
 
+    currentRegisterPopupScale:number;
+    currentLoginPopupScale:number;
 
     constructor(){
 
@@ -24,12 +27,53 @@ export default class NHPLogin{
         this.constructRegisterName();
         this.constructLoginName();
 
-        this.hideRegisterNickName();
-        this.hideLoginPopup();
+        //this.hideRegisterNickName();
+        // this.hideLoginPopup();
+
+        
     }
 
+    onWindowResize(){
+        let registerSceneDiv = $( "#nhp-register" );
+        let loginAsSceneDiv = $( "#nhp-loginas" );
+        var elWidth,elHeight;
+        var elRegisterWidth,elRegisterHeight;
+        var windowWidth,windowHeight;
+		
+		elWidth = 400; 
+        elHeight = 80;
+        
+        elRegisterWidth = 300;
+        elRegisterHeight = 350;
+
+		windowWidth = window.innerWidth;
+		windowHeight = window.innerHeight;
+		
+		
+		this.currentLoginPopupScale = Math.min(
+			(windowWidth/elWidth) * 0.8,    
+			(windowHeight/elHeight) * 0.8
+        );
+
+        this.currentRegisterPopupScale = Math.min(
+			(windowWidth/elRegisterWidth) * 0.8,    
+			(windowHeight/elRegisterHeight) * 0.8
+        );
+        
+        if(this.currentLoginPopupScale > 1.2)
+            this.currentLoginPopupScale = 1.2;
+
+        if(this.currentRegisterPopupScale > 1.2)
+        this.currentRegisterPopupScale = 1.2;
+        
+        loginAsSceneDiv.css("zoom",this.currentLoginPopupScale);
+
+        registerSceneDiv.css("zoom",this.currentRegisterPopupScale);
+
+	}
+
     setData(player:PLAYER){
-        $("#nhp-nickname-field").html(player.name);
+        $("#nhp-nickname-field").val(player.name);
 
         $("#nhp-loginas-nickname-label").html("welcome "+player.name+"!");
     }
@@ -40,16 +84,21 @@ export default class NHPLogin{
         }
         this.loginSceneDiv.show();
         this.registerPopupDiv.show();
-        this.registerPopupDiv.css("zoom","0.2");
+        this.registerPopupDiv.css("zoom",this.currentRegisterPopupScale * 0.2);
         this.registerPopupDiv.css("opacity","0");
-        this.registerPopupDiv.animate({zoom: "1",opacity:"1"},500,function(){
+        this.registerPopupDiv.animate({zoom: this.currentRegisterPopupScale,opacity:"1"},500,function(){
             //callback
         });
     }
 
     hideRegisterNickName(){
         this.loginSceneDiv.hide();
-        this.registerPopupDiv.hide();
+        
+        var self = this;
+        this.registerPopupDiv.animate({opacity:"0"},500,function(){
+            //callback
+            self.registerPopupDiv.hide();
+        });
     }
 
     showLoginPopup(){
@@ -125,6 +174,8 @@ export default class NHPLogin{
         //later
         let cancelButton = $('<button/>', { text: 'Later', id: 'nhp-button-nickname-later', class:styleLogin["register-popup-submit-later"]});
         cancelButton.appendTo(this.registerPopupDiv);
+
+        this.registerPopupDiv.hide();
     }
 
     constructLoginName(){
@@ -152,7 +203,7 @@ export default class NHPLogin{
             self.hideLoginPopup();
             self.showRegisterNickName(false);
         });
-
+        this.loginAsPopupDiv.hide();
         // setTimeout(function(){
         //     self.hideLoginPopup();
         // },2000);

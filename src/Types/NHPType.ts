@@ -41,3 +41,21 @@ export interface RANKING_DATA{
     player:PLAYER,
     score:number
 }
+
+export enum HOME_BUTTON_POSITION{
+    TOP_LEFT = "TOP_LEFT",
+    CENTER_LEFT = "CENTER_LEFT",
+    BOTTOM_LEFT = "BOTTOM_LEFT"
+}
+
+export interface NHPHomeParameter{
+    position:HOME_BUTTON_POSITION,
+    url:string
+}
+
+export interface ASSET_LIST{
+    homeScene:{
+        background:string,
+        home:string
+    }
+}

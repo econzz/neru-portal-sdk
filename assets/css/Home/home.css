@@ -1,0 +1,16 @@
+.nhp-home {
+
+    background-repeat: no-repeat;
+    width:64px;
+    height:44px;
+    z-index: 100;
+    position: fixed;
+    background-size: 100%;
+}
+.nhp-homebutton{
+
+    background-repeat: no-repeat;
+     width: 24px;
+    height: 22px;
+        margin: 12px 18px;
+}

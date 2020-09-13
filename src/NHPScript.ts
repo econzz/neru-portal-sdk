@@ -1,5 +1,5 @@
 import NHPInterface from "./NHPInterface";
-import { METHOD, PLAYER, ENVIRONMENT, ERROR_CODE, ERROR } from "./types/NHPType";
+import { METHOD, PLAYER, ENVIRONMENT, ERROR_CODE, ERROR, NHPHomeParameter } from "./types/NHPType";
 import {API_VERSION, CURRENT_ENV, LOCAL_SERVER_URL, DEV_SERVER_URL, LIVE_SERVER_URL, DEFAULT_PLAYER_NAME, SAVE_DATA_KEY, SAVE_DATA_KEY_LIVE } from "./const";
 import NHPStorageController from "./LocalStorage/NHPStorageController";
 import NHPLogin from "./Scene/NHPLogin";
@@ -96,16 +96,27 @@ export default class NHPScript implements NHPInterface{
         });
     }
 
+    spawnHome(parameter?:NHPHomeParameter){
+        NHPSceneController.getInstance().showHomeButton(parameter);
+    }
+
+    unSpawnHome(){
+        NHPSceneController.getInstance().hideHomeButton();
+    }
+
     startGame(){
         return new Promise<any>((resolve,reject)=>{
             try{
                 var self = this;
+                if(!this.player.id)
+                    this.player = this.getPlayer();
                 NHPScript.log("STARTGAME");
                 NHPScript.log(this.gameId);
                 NHPScript.log(self.player);
                 //first play
                 if(NHPStorageController.getInstance().currentLocalData.isFirstPlay){
                     NHPScript.log("ISFIRSTPLAY");
+                    NHPStorageController.getInstance().setPlayerInfo(self.player,false);
                     NHPSceneController.getInstance().showFirstPlay(self.player,function(updatedPlayer:PLAYER){
                         self.registerPlayerName(updatedPlayer.name).then(function(){
                             
@@ -126,7 +137,7 @@ export default class NHPScript implements NHPInterface{
                     });
                 }
 
-                
+                this.spawnHome();
 
                 resolve({});
                 
@@ -143,7 +154,7 @@ export default class NHPScript implements NHPInterface{
     getPlayer(){
         //user player id and name from localstorage, if any
         this.player.id = NHPStorageController.getInstance().currentLocalData.playerId;
-        this.player.name = NHPStorageController.getInstance().currentLocalData.playerName;
+        this.player.name = (NHPStorageController.getInstance().currentLocalData.playerName?NHPStorageController.getInstance().currentLocalData.playerName:DEFAULT_PLAYER_NAME);
 
         return this.player;
     }
@@ -156,9 +167,10 @@ export default class NHPScript implements NHPInterface{
 
             if(name)
                 this.player.name = name;
+
             let requestParameter = {
                 "player_id" : this.player.id,
-                "player_name" : this.player.name,
+                "player_name" : (this.player.name?this.player.name:DEFAULT_PLAYER_NAME),
                 "score" : score
             };
 

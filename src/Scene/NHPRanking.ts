@@ -10,6 +10,8 @@ export default class NHPRanking{
     rankingPopupDiv:any;
     rankingScrollableContentDiv:any;
 
+    currentScale:number;
+
     constructor(){
         if($( "#nhp-ranking" ).length){//if div exists
             this.rankingSceneDiv = $( "#nhp-ranking" ); //use it
@@ -21,7 +23,33 @@ export default class NHPRanking{
         } 
 
         this.constructRanking();
+
+        
     }
+
+    onWindowResize(){
+
+        let rankingSceneDiv = $( "#nhp-ranking" );
+		var elWidth,elHeight,windowWidth,windowHeight;
+		
+		
+		elWidth = 400; 
+		elHeight = 520;
+		windowWidth = window.innerWidth;
+		windowHeight = window.innerHeight;
+		
+		
+		this.currentScale = Math.min(
+			(windowWidth/elWidth) * 0.8,    
+			(windowHeight/elHeight) * 0.8
+        );
+        
+        if(this.currentScale > 1.2)
+            this.currentScale = 1.2;
+        
+        rankingSceneDiv.css("zoom",this.currentScale);
+	}
+
     
     constructRanking(){
         if($( "#nhp-ranking-popup" ).length){//if div exists
@@ -116,16 +144,20 @@ export default class NHPRanking{
         this.loadRankingData(data);
 
         this.rankingSceneDiv.show();
-        this.rankingSceneDiv.css("zoom","0.2");
+        this.rankingSceneDiv.css("zoom",this.currentScale*0.2);
         this.rankingSceneDiv.css("top","-100px");
         this.rankingSceneDiv.css("opacity","0");
-        this.rankingSceneDiv.animate({zoom: "1",opacity:"1"},500,function(){
+        this.rankingSceneDiv.animate({zoom: this.currentScale,opacity:"1"},500,function(){
             //callback
         });
     }
 
     hideRanking(){
         this.rankingScrollableContentDiv.slick("unslick");
-        this.rankingSceneDiv.hide();
+        var self = this;
+        this.rankingSceneDiv.animate({opacity:"0"},500,function(){
+            //callback
+            self.rankingSceneDiv.hide();
+        });
     }
 }
