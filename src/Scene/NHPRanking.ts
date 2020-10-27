@@ -3,6 +3,9 @@ import $ from "jquery";
 import 'slick-carousel';
 import { PLAYER, RANKING, RANKING_DATA } from "../types/NHPType";
 import NHPScript from "../NHPScript";
+/**
+ * Class that construct leaderboard for SDK
+ */
 export default class NHPRanking{
 
     rankingSceneDiv:any;
@@ -27,6 +30,9 @@ export default class NHPRanking{
         
     }
 
+    /**
+     * called when window is resized
+     */
     onWindowResize(){
 
         let rankingSceneDiv = $( "#nhp-ranking" );
@@ -50,7 +56,9 @@ export default class NHPRanking{
         rankingSceneDiv.css("zoom",this.currentScale);
 	}
 
-    
+    /**
+     * construct ranking html
+     */
     constructRanking(){
         if($( "#nhp-ranking-popup" ).length){//if div exists
             this.rankingPopupDiv = $( "#nhp-ranking-popup" ); //use it
@@ -104,7 +112,10 @@ export default class NHPRanking{
         
     }
     
-
+    /**
+     * load data to ranking UI
+     * @param rankingData {RANKING} rankdata
+     */
     loadRankingData(rankingData:RANKING){
         this.rankingScrollableContentDiv.empty();
         //this.rankingScrollableContentDiv.slick("unslick");
@@ -138,6 +149,11 @@ export default class NHPRanking{
         });
     }
 
+    /**
+     * show ranking UI component
+     * @param myAchievedScore {number} score achieved on this session
+     * @param data {RANKING} ranking data
+     */
     showRanking(myAchievedScore:number,data:RANKING){
         $("#nhp-ranking-achievedscore").html(""+myAchievedScore);
 
@@ -152,6 +168,9 @@ export default class NHPRanking{
         });
     }
 
+    /**
+     * hide ranking UI Component
+     */
     hideRanking(){
         this.rankingScrollableContentDiv.slick("unslick");
         var self = this;

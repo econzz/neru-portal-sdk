@@ -54,11 +54,17 @@ export default class NHPScript implements NHPInterface{
         console.log("%c ", "color: blue;",toLog); 
     }
 
+    /**
+     * retrieve game ID from HTML. TODO: think of another secure way to get game id
+     */
     getGameIdFromElement(){
         var el: HTMLInputElement = <HTMLInputElement>parent.document.getElementById('game_id');//notsafe
         return el.value;
     }
 
+    /**
+     * initialize SDK, get game ID
+     */
     initialize(){
         return new Promise<any>((resolve,reject)=>{
             try{
@@ -96,14 +102,23 @@ export default class NHPScript implements NHPInterface{
         });
     }
 
+    /**
+     * spawn home button
+     */
     spawnHome(parameter?:NHPHomeParameter){
         NHPSceneController.getInstance().showHomeButton(parameter);
     }
 
+    /**
+     * unspawn home button
+     */
     unSpawnHome(){
         NHPSceneController.getInstance().hideHomeButton();
     }
 
+    /**
+     * Start game, invoke whether current player is new or not
+     */
     startGame(){
         return new Promise<any>((resolve,reject)=>{
             try{
@@ -150,7 +165,10 @@ export default class NHPScript implements NHPInterface{
     }
 
     
-
+    /**
+     * Get player information
+     * @return {PLAYER} player information
+     */
     getPlayer(){
         //user player id and name from localstorage, if any
         this.player.id = NHPStorageController.getInstance().currentLocalData.playerId;
@@ -159,6 +177,11 @@ export default class NHPScript implements NHPInterface{
         return this.player;
     }
 
+    /**
+     * Add number to current score already registered in the leaderboard
+     * @param score {number} score to add
+     * @param name {string} nickname for player, optional
+     */
     addScore(score:number,name?:string){
         return new Promise<any>((resolve,reject)=>{
             
@@ -200,6 +223,11 @@ export default class NHPScript implements NHPInterface{
         });
     }
 
+    /**
+     * Send Score for leaderboard
+     * @param score {number} score to register
+     * @param name {string} nickname for player, optional
+     */
     sendScore(score:number,name?:string){
         return new Promise<any>((resolve,reject)=>{
             NHPScript.log("sendScore");
@@ -244,6 +272,11 @@ export default class NHPScript implements NHPInterface{
         });
     }
 
+    
+    /**
+     * Retrieve leaderboard data from game portal
+     * @param pageNumber {number} of page starting from 1
+     */
     getAlltimeLeaderboard(pageNumber:number){
         return new Promise<any>((resolve,reject)=>{
             NHPScript.log("getAlltimeLeaderboard");
@@ -267,6 +300,11 @@ export default class NHPScript implements NHPInterface{
         });
     }
 
+      
+    /**
+     * Register player nickname
+     * @param name {string} player nickname
+     */
     registerPlayerName(name:string){
         return new Promise<any>((resolve,reject)=>{
             NHPScript.log("registerPlayerName");
@@ -296,6 +334,13 @@ export default class NHPScript implements NHPInterface{
         });
     };
 
+    /**
+     * function that request to API
+     * @param method {METHOD} POST or GET
+     * @param path {string} path of the API
+     * @param parameter {any} parameter passed for the API
+     * @param onComplete {function} called when requesting completes/errors
+     */
     sendServer(method:METHOD, path:string, parameter:any, onComplete:(isSucccess:boolean,responseData:any)=>void){
         let xhr = new XMLHttpRequest();
 
@@ -344,6 +389,10 @@ export default class NHPScript implements NHPInterface{
         }
     }
 
+    /**
+     * generate player info based on browser information
+     * @param onSuccess {function} called when success generating player
+     */
     generatePlayerInfoFromBrowser(onSuccess:(player:PLAYER)=>void){
         if (requestIdleCallback) {
             requestIdleCallback(function () {

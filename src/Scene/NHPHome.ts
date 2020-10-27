@@ -3,6 +3,9 @@ import { NHPHomeParameter, HOME_BUTTON_POSITION } from "../types/NHPType";
 import NHPScript from "../NHPScript";
 import { assets } from "../const";
 var styleHome = require("../../assets/css/Home/home.css");
+/**
+ * Class that construct Home Button for SDK
+ */
 export default class NHPHome{
     
     homeSceneDiv: JQuery<HTMLElement>;
@@ -23,6 +26,9 @@ export default class NHPHome{
         this.constructHome();
     }
 
+    /**
+     * called when window is resized
+     */
     onWindowResize(){
         let homeSceneDiv = $( "#nhp-home" );
 		var elWidth,elHeight,windowWidth,windowHeight,scale;
@@ -45,6 +51,10 @@ export default class NHPHome{
         homeSceneDiv.css("zoom",scale);
 	}
 
+    /**
+     * show home button
+     * parameter {NHPHomeParameter} set the parameter of the home button
+     */
     showElement(parameter:NHPHomeParameter){
         this.homeSceneDiv.css("left","-200px");
         if(!parameter.position || parameter.position === HOME_BUTTON_POSITION.TOP_LEFT){
@@ -69,17 +79,27 @@ export default class NHPHome{
         this.refreshAsset();
     }
 
-    refreshAsset(){
-        this.imageHomeButton.css("background-image","url('"+assets.homeScene.home+"')");
-        this.homeSceneDiv.css("background-image","url('"+assets.homeScene.background+"')");
-    }
-
+    /**
+     * hide home button
+     */
     hideElement(){
         var self = this;
         this.homeSceneDiv.animate({left: '-200px'}, 1000, 'linear',function(){
             self.homeSceneDiv.hide();
         });
     }
+
+    /**
+     * refresh assets (image) used in the component
+     */
+    refreshAsset(){
+        this.imageHomeButton.css("background-image","url('"+assets.homeScene.home+"')");
+        this.homeSceneDiv.css("background-image","url('"+assets.homeScene.background+"')");
+    }
+
+    /**
+     * construct home component html
+     */
     constructHome() {
         this.aHrefHomeButton = $("<a id='nhp-homehref'/>");
         

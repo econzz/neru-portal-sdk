@@ -3,6 +3,9 @@ import $ from "jquery";
 import { ERROR_CODE, ERROR, PLAYER } from "../types/NHPType";
 import NHPScript from "../NHPScript";
 var styleLogin = require("../../assets/css/Login/login.css");
+/**
+ * Class that construct register and login form for SDK
+ */
 export default class NHPLogin{
 
     loginSceneDiv:any;//parent
@@ -33,6 +36,9 @@ export default class NHPLogin{
         
     }
 
+    /**
+     * called when window is resized
+     */
     onWindowResize(){
         let registerSceneDiv = $( "#nhp-register" );
         let loginAsSceneDiv = $( "#nhp-loginas" );
@@ -72,12 +78,20 @@ export default class NHPLogin{
 
 	}
 
+    /**
+     * set data to appropriate field text
+     * @param player {PLAYER} playerData
+     */
     setData(player:PLAYER){
         $("#nhp-nickname-field").val(player.name);
 
         $("#nhp-loginas-nickname-label").html("welcome "+player.name+"!");
     }
 
+    /**
+     * show register nickname form
+     * @param isFirst {boolean} is new player or not
+     */
     showRegisterNickName(isFirst:boolean){ 
         if(!isFirst){ //名前の更新するため
             $("#nhp-nickname-label").html("Greetings! <br>Update your nickname to use in the games!");
@@ -91,6 +105,9 @@ export default class NHPLogin{
         });
     }
 
+    /**
+     * hide register nickname form
+     */
     hideRegisterNickName(){
         this.loginSceneDiv.hide();
         
@@ -101,6 +118,9 @@ export default class NHPLogin{
         });
     }
 
+    /**
+     * show login popup, for registered player
+     */
     showLoginPopup(){
         this.loginSceneDiv.show();
         this.loginAsPopupDiv.show();
@@ -116,6 +136,9 @@ export default class NHPLogin{
             });
         },2000);
     }
+    /**
+     * hide login popup
+     */
     hideLoginPopup(isSwitching?:boolean){
         if(isSwitching === false){
             this.loginSceneDiv.hide();
@@ -147,6 +170,9 @@ export default class NHPLogin{
         });
     }
 
+    /**
+     * construct register html 
+     */
     constructRegisterName(){
         if($( "#nhp-register" ).length){//if div exists
             this.registerPopupDiv = $( "#nhp-register" ); //use it
@@ -178,6 +204,9 @@ export default class NHPLogin{
         this.registerPopupDiv.hide();
     }
 
+    /**
+     * construct login popup html
+     */
     constructLoginName(){
         if($( "#nhp-loginas" ).length){//if div exists
             this.loginAsPopupDiv = $( "#nhp-loginas" ); //use it

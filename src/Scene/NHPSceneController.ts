@@ -4,6 +4,9 @@ import NHPLogin from "./NHPLogin";
 import NHPRanking from "./NHPRanking";
 import NHPHome from "./NHPHome";
 var styleCommon = require("../../assets/css/common.css");
+/**
+ * Class that manage all UI components
+ */
 export default class NHPSceneController{
   private static instance:NHPSceneController = null; 
   
@@ -49,12 +52,18 @@ export default class NHPSceneController{
     window.addEventListener('resize',this.onWindowResize.bind(this));
   }
 
+  /**
+     * called when window is resized
+     */
   onWindowResize(){
     this.rankingClass.onWindowResize();
     this.loginClass.onWindowResize();
     this.homeClass.onWindowResize();
   }
 
+  /**
+     * construct overlay
+     */
   constructOverlay(){
     if($( "#nhp-overlay" ).length){//if div exists
         this.overlayDiv = $( "#nhp-overlay" );
@@ -69,7 +78,11 @@ export default class NHPSceneController{
     
   }
 
-
+ /**
+  * called when player is new
+  * @param player {PLAYER} player object with new playerid
+  * @param onClose {function} callback function when closed
+  */
   showFirstPlay(player:PLAYER,onClose:(updatedPlayer:PLAYER)=>void){
     
     this.loginClass.setData(player);
@@ -82,6 +95,11 @@ export default class NHPSceneController{
     this.onWindowResize();
   }
 
+  /**
+  * called when player is already logged in
+  * @param player {PLAYER} current logged in player object
+  * @param onClose {function} callback function when nickname is updated
+  */
   processLogin(player:PLAYER,onClose:(updatedPlayer:PLAYER)=>void){
     this.loginClass.setData(player);
     this.loginClass.showLoginPopup();
@@ -92,11 +110,20 @@ export default class NHPSceneController{
     this.onWindowResize();
   }
 
+  /**
+  * called when player is register their score (at the end of the play session)
+  * @param score {number} player object with new playerid
+  * @param rankData {function} callback function when closed
+  */
   registerScore(score:number,rankData:RANKING,onClose:()=>void){
     this.rankingClass.showRanking(score,rankData);
     this.onWindowResize();
   }
 
+  /**
+   * show Home Button with parameters to set
+   * @param parameter {NHPHomeParameter} home parameter
+   */
   showHomeButton(parameter:NHPHomeParameter){
     this.homeClass.showElement({
       url:(parameter && parameter.url?parameter.url:"javascript:history.back()"),
@@ -105,6 +132,9 @@ export default class NHPSceneController{
     this.onWindowResize();
   }
 
+  /**
+   * hide Home Button
+   */
   hideHomeButton(){
     this.homeClass.hideElement();
   }

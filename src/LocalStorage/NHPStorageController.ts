@@ -1,7 +1,9 @@
 import { SAVE_DATA_KEY, SAVE_VERSION } from "../const";
 import { SAVE_DATA, PLAYER } from "../types/NHPType";
 import NHPScript from "../NHPScript";
-
+/**
+ * class that manages any data saved for local storage
+ */
 export default class NHPStorageController{
 
     private _currentLocalData:SAVE_DATA;
@@ -35,6 +37,9 @@ export default class NHPStorageController{
         this.saveKey = SAVE_DATA_KEY;
     }
 
+    /**
+     * set player info
+     */
     setPlayerInfo(player:PLAYER,isFirstPlay:boolean){
         this.currentLocalData.playerId = player.id;
         this.currentLocalData.playerName = player.name;
@@ -42,6 +47,9 @@ export default class NHPStorageController{
         this.setSaveData();
     }
 
+    /**
+     * set save data saved on localstorage
+     */
     setSaveData(){
         if(typeof(Storage) === "undefined"){
             return;
@@ -52,6 +60,9 @@ export default class NHPStorageController{
         NHPScript.log("NHPStorageController::setSaveDatacomplete");
     }
 
+    /**
+     * load save data saved on localstorage
+     */
     loadSaveData():SAVE_DATA{
         if(typeof(Storage) === "undefined"){
             return this.currentLocalData;
